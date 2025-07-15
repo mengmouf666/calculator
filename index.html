@@ -2,32 +2,91 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>资金生命周期计算器</title>
-  <!--
-    本页面为资金生命周期计算器，可以在本地双击打开，或通过 GitHub Pages 在线预览。
-    启用方式：仓库设置 -> Pages -> 选择分支和目录（如 main 分支根目录或 docs/）-> 保存。
-    访问地址类似：https://<你的用户名>.github.io/<仓库名>/
-  -->
   <style>
-    body { font-family: sans-serif; padding: 20px; background: #f8f8f8; }
-    label, input { display: block; margin: 10px 0; }
-    input[type="number"] { width: 200px; padding: 5px; }
-    button { padding: 10px 20px; margin-top: 20px; }
-    #result { margin-top: 30px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #222;
+    }
+    label {
+      margin-top: 15px;
+      display: block;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #3a7afe;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #295df1;
+    }
+    #result {
+      margin-top: 30px;
+    }
+    .year-result {
+      background: #fafafa;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border-left: 4px solid #3a7afe;
+    }
+    .year-result strong {
+      color: #000;
+    }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .container { padding: 15px; }
+    }
   </style>
 </head>
 <body>
-  <h2>资金生命周期计算器</h2>
-  <label>初始资金（元）：<input type="number" id="initialFund" value="1900000"></label>
-  <label>每月收入（元）：<input type="number" id="monthlyIncome" value="10000"></label>
-  <label>年化收益率（%）：<input type="number" id="annualRate" value="3"></label>
-  <label>每月支出（元）：<input type="number" id="monthlyExpense" value="12000"></label>
-  <label>当前年龄：<input type="number" id="currentAge" value="36"></label>
-  <label>退休年龄：<input type="number" id="retireAge" value="60"></label>
-  <label>预估寿命：<input type="number" id="lifeExpectancy" value="85"></label>
-  <label>退休后支出比例（如60%填60）：<input type="number" id="retireRatio" value="60"></label>
-  <button onclick="calculate()">计算</button>
-  <div id="result"></div>
+  <div class="container">
+    <h2>资金生命周期计算器</h2>
+    <label>初始资金（元）：<input type="number" id="initialFund" value="1900000"></label>
+    <label>每月收入（元）：<input type="number" id="monthlyIncome" value="10000"></label>
+    <label>年化收益率（%）：<input type="number" id="annualRate" value="3"></label>
+    <label>每月支出（元）：<input type="number" id="monthlyExpense" value="12000"></label>
+    <label>当前年龄：<input type="number" id="currentAge" value="36"></label>
+    <label>退休年龄：<input type="number" id="retireAge" value="60"></label>
+    <label>预估寿命：<input type="number" id="lifeExpectancy" value="85"></label>
+    <label>退休后支出比例（如60%填60）：<input type="number" id="retireRatio" value="60"></label>
+    <button onclick="calculate()">开始计算</button>
+
+    <div id="result"></div>
+  </div>
+
   <script>
     function calculate() {
       const initialFund = parseFloat(document.getElementById('initialFund').value);
@@ -39,10 +98,12 @@
       const retireAge = parseInt(document.getElementById('retireAge').value);
       const lifeExpectancy = parseInt(document.getElementById('lifeExpectancy').value);
       const retireRatio = parseFloat(document.getElementById('retireRatio').value) / 100;
+
       let balance = initialFund;
       let resultText = '';
       let totalMonths = (lifeExpectancy - currentAge) * 12;
       let retireMonth = (retireAge - currentAge) * 12;
+
       for (let m = 0; m < totalMonths; m++) {
         const isRetired = m >= retireMonth;
         const income = isRetired ? 0 : monthlyIncome;
@@ -50,11 +111,13 @@
         const interest = balance * monthlyRate;
         const net = income + interest - expense;
         balance += net;
+
         if ((m + 1) % 12 === 0) {
           const age = currentAge + Math.floor((m + 1) / 12);
-          resultText += `<p><strong>${age}岁</strong> 年末资产：<strong>${balance.toFixed(2)}</strong> 元</p>`;
+          resultText += `<div class='year-result'><strong>${age}岁</strong> 年末资产：<strong>${balance.toFixed(2)}</strong> 元</div>`;
         }
       }
+
       document.getElementById('result').innerHTML = resultText;
     }
   </script>
