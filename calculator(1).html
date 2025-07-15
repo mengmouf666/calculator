@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <title>资金生命周期计算器</title>
+  <!--
+    本页面为资金生命周期计算器，可以在本地双击打开，或通过 GitHub Pages 在线预览。
+    启用方式：仓库设置 -> Pages -> 选择分支和目录（如 main 分支根目录或 docs/）-> 保存。
+    访问地址类似：https://<你的用户名>.github.io/<仓库名>/
+  -->
   <style>
     body { font-family: sans-serif; padding: 20px; background: #f8f8f8; }
     label, input { display: block; margin: 10px 0; }
@@ -22,9 +27,7 @@
   <label>预估寿命：<input type="number" id="lifeExpectancy" value="85"></label>
   <label>退休后支出比例（如60%填60）：<input type="number" id="retireRatio" value="60"></label>
   <button onclick="calculate()">计算</button>
-
   <div id="result"></div>
-
   <script>
     function calculate() {
       const initialFund = parseFloat(document.getElementById('initialFund').value);
@@ -36,12 +39,10 @@
       const retireAge = parseInt(document.getElementById('retireAge').value);
       const lifeExpectancy = parseInt(document.getElementById('lifeExpectancy').value);
       const retireRatio = parseFloat(document.getElementById('retireRatio').value) / 100;
-
       let balance = initialFund;
       let resultText = '';
       let totalMonths = (lifeExpectancy - currentAge) * 12;
       let retireMonth = (retireAge - currentAge) * 12;
-
       for (let m = 0; m < totalMonths; m++) {
         const isRetired = m >= retireMonth;
         const income = isRetired ? 0 : monthlyIncome;
@@ -49,13 +50,11 @@
         const interest = balance * monthlyRate;
         const net = income + interest - expense;
         balance += net;
-
         if ((m + 1) % 12 === 0) {
           const age = currentAge + Math.floor((m + 1) / 12);
           resultText += `<p><strong>${age}岁</strong> 年末资产：<strong>${balance.toFixed(2)}</strong> 元</p>`;
         }
       }
-
       document.getElementById('result').innerHTML = resultText;
     }
   </script>
